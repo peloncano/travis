@@ -16,7 +16,7 @@ latest_ref() {
 	MASTER=$(curl --silent https://raw.githubusercontent.com/cakephp/cakephp/2.x/lib/Cake/VERSION.txt)
 	MASTER=$(echo "$MASTER" | tail -1 | grep -Ei "^$CAKE_VERSION\.")
 	if [ -n "$MASTER" ]; then
-		echo "master"
+		echo "$MASTER"
 		exit 0
 	fi
 
@@ -42,6 +42,7 @@ if [ "$DB" = "pgsql" ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres
 
 REPO_PATH=$(pwd)
 SELF_PATH=$(cd "$(dirname "$0")"; pwd)
+PHP_VERSION=$(php --version | cut -b 5 | head -1)
 
 # Clone CakePHP repository
 if [ -z "$CAKE_REF" ]; then
@@ -78,7 +79,7 @@ if [ "$PHPCS" != '1' ]; then
 	ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ./Vendor/PHPUnit
 fi
 
-phpenv rehash
+# phpenv rehash
 
 set +H
 
@@ -96,3 +97,16 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     </whitelist>
 </filter>
 </phpunit>" > phpunit.xml
+
+if [ "$PHP_VERSION" == '7']; then
+	composer global require --dev phpunit/phpunit:"4.* || 5.*" --update-with-dependencies
+	ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ./Vendor/PHPUnit
+	echo "// Load Composer autoload.
+require APP . 'Vendor/autoload.php';
+
+// Remove and re-prepend CakePHP's autoloader as Composer thinks it is the
+// most important.
+// See: http://goo.gl/kKVJO7
+spl_autoload_unregister(array('App', 'load'));
+spl_autoload_register(array('App', 'load'), true, true);" >> Config/bootstrap.php
+fi
