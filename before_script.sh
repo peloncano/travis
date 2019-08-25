@@ -107,8 +107,8 @@ echo "Current PHP Version $PHP_VERSION"
 
 if [ "$PHP_VERSION" == "7" ]; then
 	echo "Installing PHPUnit 4.* || 5.*"
-	composer global require "phpunit/phpunit=5.*" --update-with-dependencies
-	ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ./Vendor/PHPUnit
+	composer require "phpunit/phpunit=5.*" --update-with-dependencies
+	#ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ./Vendor/PHPUnit
 	echo "
 // Load Composer autoload.
 require APP . 'Vendor/autoload.php';
