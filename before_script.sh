@@ -62,9 +62,12 @@ chmod -R 777 tmp
 
 cp -R $REPO_PATH Plugin/$PLUGIN_NAME
 
+ls -la # for testing
+
 mv $SELF_PATH/database.php Config/database.php
 
 COMPOSER_JSON="$(pwd)/Plugin/$PLUGIN_NAME/composer.json"
+echo "composer json path $COMPOSER_JSON"
 if [ -f "$COMPOSER_JSON" ]; then
     cp $COMPOSER_JSON ./composer.json;
     composer install --no-interaction --prefer-source
@@ -79,7 +82,7 @@ if [ "$PHPCS" != '1' ]; then
 	ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ./Vendor/PHPUnit
 fi
 
-# phpenv rehash
+phpenv rehash
 
 set +H
 
@@ -97,6 +100,10 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     </whitelist>
 </filter>
 </phpunit>" > phpunit.xml
+
+cat phpunit.xml # for testing
+
+echo "Current PHP Version $PHP_VERSION"
 
 if [ "$PHP_VERSION" == "7" ]; then
 	echo "Installing PHPUnit 4.* || 5.*"
