@@ -98,7 +98,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 </filter>
 </phpunit>" > phpunit.xml
 
-if [ "$PHP_VERSION" == '7']; then
+if [ "$PHP_VERSION" == "7" ]; then
+	echo "Installing PHPUnit 4.* || 5.*"
 	composer global require --dev phpunit/phpunit:"4.* || 5.*" --update-with-dependencies
 	ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ./Vendor/PHPUnit
 	echo "// Load Composer autoload.
