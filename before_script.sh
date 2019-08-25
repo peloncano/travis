@@ -107,9 +107,10 @@ echo "Current PHP Version $PHP_VERSION"
 
 if [ "$PHP_VERSION" == "7" ]; then
 	echo "Installing PHPUnit 4.* || 5.*"
-	composer global require --dev phpunit/phpunit:"4.* || 5.*" --update-with-dependencies
+	composer global require "phpunit/phpunit=5.*" --update-with-dependencies
 	ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ./Vendor/PHPUnit
-	echo "// Load Composer autoload.
+	echo "
+// Load Composer autoload.
 require APP . 'Vendor/autoload.php';
 
 // Remove and re-prepend CakePHP's autoloader as Composer thinks it is the
