@@ -77,9 +77,27 @@ for dep in $REQUIRE; do
     composer require --no-interaction --prefer-source $dep;
 done
 
-if [ "$PHPCS" != '1' ]; then
-	composer global require 'phpunit/phpunit=3.7.38'
-	ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ./Vendor/PHPUnit
+# if [ "$PHPCS" != '1' ]; then
+# 	composer global require 'phpunit/phpunit=3.7.38'
+# 	ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ./Vendor/PHPUnit
+# fi
+
+echo "Current PHP Version $PHP_VERSION"
+
+if [ "$PHP_VERSION" == "7" ]; then
+	echo "Installing 5.*"
+	curl https://phar.phpunit.de/phpunit-5.7.9.phar --output phpunit.phar --silent
+	chmod +x phpunit.phar
+	mv phpunit.phar Vendor/phpunit.phar
+	echo "
+// Load Composer autoload.
+require APP . 'Vendor/autoload.php';
+
+// Remove and re-prepend CakePHP's autoloader as Composer thinks it is the
+// most important.
+// See: http://goo.gl/kKVJO7
+spl_autoload_unregister(array('App', 'load'));
+spl_autoload_register(array('App', 'load'), true, true);" >> Config/bootstrap.php
 fi
 
 phpenv rehash
@@ -103,19 +121,3 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 
 cat phpunit.xml # for testing
 
-echo "Current PHP Version $PHP_VERSION"
-
-if [ "$PHP_VERSION" == "7" ]; then
-	echo "Installing PHPUnit 4.* || 5.*"
-	composer require "phpunit/phpunit=5.*" --update-with-dependencies
-	#ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ./Vendor/PHPUnit
-	echo "
-// Load Composer autoload.
-require APP . 'Vendor/autoload.php';
-
-// Remove and re-prepend CakePHP's autoloader as Composer thinks it is the
-// most important.
-// See: http://goo.gl/kKVJO7
-spl_autoload_unregister(array('App', 'load'));
-spl_autoload_register(array('App', 'load'), true, true);" >> Config/bootstrap.php
-fi
